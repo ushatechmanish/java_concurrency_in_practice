@@ -19,6 +19,20 @@ public class SafeCachingFactorizer extends AbstractServlet
     private  BigInteger lastNumber ;
     @GuardedBy("this")
     private  BigInteger[] lastFactors ;
+    @GuardedBy("this")
+    private long hits;
+    @GuardedBy("this")
+    private long cacheHits;
+
+    private synchronized long getHits()
+    {
+        return hits;
+    }
+    public synchronized double getCacheHitsRatio()
+    {
+        return cacheHits / (double) hits;
+    }
+
     @Override
     public void service(ServletRequest req, ServletResponse resp) throws ServletException, IOException
     {
@@ -26,8 +40,11 @@ public class SafeCachingFactorizer extends AbstractServlet
 
         BigInteger[] factors = null; // local variable we can do whatever we want with this
 
-        synchronized (this) {
+        synchronized (this)
+        {
+            ++hits;
             if(i.equals(lastNumber)) {
+                ++cacheHits;
                 factors = lastFactors.clone();// clone to avoid changing the cache value later
                 // as we should not pass the reference of mutable object lastFactors
                 // now we are in synchronized block , after this block there is no guarantee
