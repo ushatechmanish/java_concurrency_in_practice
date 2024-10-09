@@ -1,6 +1,7 @@
 package in.ushatech;
 
 import in.ushatech.annotation.NotThreadSafe;
+import in.ushatech.annotation.ThreadSafe;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -10,7 +11,7 @@ import java.math.BigInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
-@NotThreadSafe
+@ThreadSafe
 public class UnsafeCachingFactorizer extends AbstractServlet
 {
     // This can be atomically updated
@@ -28,9 +29,17 @@ public class UnsafeCachingFactorizer extends AbstractServlet
             return;
         }
 
-        BigInteger[] factors = factor(i);
-        lastNumber.set(i);
-        lastFactors.set(factors);
+        BigInteger[] factors = factor(i); // Even though it is thread safe now but
+        // 2 separate process can calculate the factor for same number.
+        // So it is duplicacy of efforts .
+        // Better alternative would be to check if factors for i is being calculated
+        // now . if yes wait for it to complete and do not calculate the factors again
+        synchronized (this)
+        {
+            lastNumber.set(i);
+            lastFactors.set(factors);
+        }
+
         encodeIntoResponse(resp,factors);
     }
 
