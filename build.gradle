@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+}
+
+group = 'in.ushatech'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation 'javax.servlet:javax.servlet-api:4.0.1' // Servlet API
+//    implementation 'javax.servlet:javax.servlet-api:4.0.1' // Mark it as provided by container
+}
+
+test {
+    useJUnitPlatform()
+}
