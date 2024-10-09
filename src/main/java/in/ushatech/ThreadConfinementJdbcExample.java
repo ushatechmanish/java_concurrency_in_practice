@@ -5,9 +5,16 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.concurrent.ArrayBlockingQueue;
 
+// Thread confinement is a weak type .
+// Instead either use Single threaded system for simplicity
+// or use ThreadLocal or stack confinement
+// Threadlocal gets a new thread each time . For example HikariCp manages the connection pool automatically
+// Main difference is that we do not keep the responsibility of managing the take and put operation of connection to
+// the pool
+// Stack confinement is to use the local variables only without sharing them outside
 public class ThreadConfinementJdbcExample
 {
-    private static ArrayBlockingQueue<Connection> connectionPool = new ArrayBlockingQueue<>();
+    private static ArrayBlockingQueue<Connection> connectionPool = new ArrayBlockingQueue<>(10);
 
     static
     {
