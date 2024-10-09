@@ -34,7 +34,7 @@ public class UnsafeCachingFactorizer extends AbstractServlet
         // So it is duplicacy of efforts .
         // Better alternative would be to check if factors for i is being calculated
         // now . if yes wait for it to complete and do not calculate the factors again
-        synchronized (this)
+        synchronized (this) // intrinsic locks or monitor locks are mutexes or mutually exclusive locks
         {
             lastNumber.set(i);
             lastFactors.set(factors);
