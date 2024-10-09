@@ -1,5 +1,6 @@
 package in.ushatech;
 
+import in.ushatech.annotation.GuardedBy;
 import in.ushatech.annotation.ThreadSafe;
 
 import javax.servlet.ServletException;
@@ -14,29 +15,38 @@ import java.util.concurrent.atomic.AtomicReference;
 public class SafeCachingFactorizer extends AbstractServlet
 {
     // This can be atomically updated
-    private final AtomicReference<BigInteger> lastNumber = new AtomicReference<>();
-
-    private final AtomicReference<BigInteger[]> lastFactors = new AtomicReference<>();
-
+    @GuardedBy("this")
+    private  BigInteger lastNumber ;
+    @GuardedBy("this")
+    private  BigInteger[] lastFactors ;
     @Override
     public void service(ServletRequest req, ServletResponse resp) throws ServletException, IOException
     {
         BigInteger i = extractFromRequest(req);
 
-        if(i.equals(lastNumber.get())) {
-            encodeIntoResponse(resp,lastFactors.get());
-            return;
+        BigInteger[] factors = null; // local variable we can do whatever we want with this
+
+        synchronized (this) {
+            if(i.equals(lastNumber)) {
+                factors = lastFactors.clone();// clone to avoid changing the cache value later
+                // as we should not pass the reference of mutable object lastFactors
+                // now we are in synchronized block , after this block there is no guarantee
+                // that lastFactors will not change or we change it in out code
+                // any change in our code should not affect the correct lastFactors
+            }
         }
 
-        BigInteger[] factors = factor(i); // Even though it is thread safe now but
-        // 2 separate process can calculate the factor for same number.
-        // So it is duplicacy of efforts .
-        // Better alternative would be to check if factors for i is being calculated
-        // now . if yes wait for it to complete and do not calculate the factors again
-        synchronized (this) // intrinsic locks or monitor locks are mutexes or mutually exclusive locks
-        {
-            lastNumber.set(i);
-            lastFactors.set(factors);
+        if(factors == null) {
+            // Even though it is thread safe now but
+            // 2 separate process can calculate the factor for same number.
+            // So it is duplicacy of efforts .
+            // Better alternative would be to check if factors for i is being calculated
+            // now . if yes wait for it to complete and do not calculate the factors again
+            factors = factor(i);
+            synchronized (this) {
+                lastNumber = i;
+                lastFactors =   factors.clone();// clone to avoid
+            }
         }
 
         encodeIntoResponse(resp,factors);
