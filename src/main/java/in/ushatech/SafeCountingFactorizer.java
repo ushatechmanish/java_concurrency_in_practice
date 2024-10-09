@@ -5,14 +5,17 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
-public class UnsafeCountingFactorizer extends AbstractServlet
+public class SafeCountingFactorizer extends AbstractServlet
 {
-    private long count = 0 ;
+    // If this is used to generate sequences then it is a big issue and can cause serious data integrity issues
+    //    private long count;
+    private AtomicLong count = new AtomicLong(0) ;
 
     public long getCount()
     {
-        return count;
+        return count.get();
     }
 
     @Override
@@ -20,7 +23,7 @@ public class UnsafeCountingFactorizer extends AbstractServlet
     {
         BigInteger i = extractFromRequest(req);
         BigInteger[] factors = factor(i);
-        ++count;
+        count.incrementAndGet();
         encodeIntoResponse(resp,factors);
     }
 
