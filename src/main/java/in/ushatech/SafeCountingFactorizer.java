@@ -1,5 +1,7 @@
 package in.ushatech;
 
+import in.ushatech.annotation.ThreadSafe;
+
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -7,6 +9,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+@ThreadSafe
 public class SafeCountingFactorizer extends AbstractServlet
 {
     // If this is used to generate sequences then it is a big issue and can cause serious data integrity issues

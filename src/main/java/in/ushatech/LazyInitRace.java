@@ -1,13 +1,14 @@
 package in.ushatech;
 
 import in.ushatech.annotation.NotThreadSafe;
+import in.ushatech.annotation.ThreadSafe;
 
-@NotThreadSafe
+@ThreadSafe
 public class LazyInitRace
 {
     private ExpensiveObject instance = null;
 
-    public ExpensiveObject getInstance()
+    public synchronized ExpensiveObject getInstance()
     {
         if (instance == null)
         {
