@@ -59,7 +59,7 @@ public class SafeCachingFactorizer extends AbstractServlet
             // So it is duplicacy of efforts .
             // Better alternative would be to check if factors for i is being calculated
             // now . if yes wait for it to complete and do not calculate the factors again
-            factors = factor(i);
+            factors = factor(i); // long running operation avoid in synchronized block
             synchronized (this) {
                 lastNumber = i;
                 lastFactors =   factors.clone();// clone to avoid
