@@ -14,6 +14,9 @@ public class ThisEscape
                 doSomething(e);
             }
         });
+
+        // some more lines. The object has already escaped before the construction of object
+        // so that state is not correct
     }
 
     private void doSomething(Event e)
