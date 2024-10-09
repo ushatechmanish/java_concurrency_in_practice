@@ -1,6 +1,5 @@
 package in.ushatech;
 
-import in.ushatech.annotation.NotThreadSafe;
 import in.ushatech.annotation.ThreadSafe;
 
 import javax.servlet.ServletException;
@@ -8,11 +7,11 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
+// Every variable and operation on it should be guided by the same lock
 @ThreadSafe
-public class UnsafeCachingFactorizer extends AbstractServlet
+public class SafeCachingFactorizer extends AbstractServlet
 {
     // This can be atomically updated
     private final AtomicReference<BigInteger> lastNumber = new AtomicReference<>();
