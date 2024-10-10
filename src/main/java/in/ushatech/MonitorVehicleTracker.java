@@ -53,6 +53,7 @@ public class MonitorVehicleTracker
         }
         // possible stale data issue . if the application is ok with not real time location
         // it should not be an issue
+        // Benefit is that client can not change the object state
         return Collections.unmodifiableMap(copy);
     }
 }
