@@ -18,6 +18,7 @@ public class PublishingVehicleTracker
     // Read only but backed collection for showing live view of the vehicles
     private final Map<String, SafePoint> unmodifiableMap;
 
+    // Callers can not add vehicles but change the vehicle location as SafePoint is mutable thread safe
     public PublishingVehicleTracker(Map<String, SafePoint> SafePoints)
     {
         locations = new ConcurrentHashMap<String, SafePoint>(SafePoints);
