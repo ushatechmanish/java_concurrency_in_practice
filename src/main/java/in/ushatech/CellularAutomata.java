@@ -6,16 +6,20 @@ import java.util.concurrent.CyclicBarrier;
 public class CellularAutomata
 {
     private final Board mainBoard; // 2D board
-    private final CyclicBarrier barrier;
+    private final CyclicBarrier barrier;// Barrier is for waiting for threads whereas Latches are
+    // for waiting for events
+    // Cyclic barrier allows a fixed number of parties to rendezvous repeatedly at a barrier point
+    // and is useful in parallel iterative algorithms
     private final Worker[] workers;
 
     public CellularAutomata(Board mainBoard)
     {
         this.mainBoard = mainBoard;
         int count = Runtime.getRuntime().availableProcessors();
-
+        // cyclic barrier should be used when one iteration should complete before next iteration and single iteration can be divided
+        // in sub problems
         this.barrier = new CyclicBarrier(count,
-                () ->
+                () -> // this is executed before releasing all the threads
                 {
                     mainBoard.commitNewValue();
 //                    barrier.reset(); barrier is reset automatically after all the worker threads complete their work
@@ -68,6 +72,8 @@ public class CellularAutomata
                 try
                 {
                     barrier.await(); // All worker threads will wait here till all workers are done
+                    // barrier returns a unique index for the arrival index of each thread .
+                    // This can help select leader for the threads
                 } catch (InterruptedException | BrokenBarrierException e)
                 {
                     return; // Exit on exception

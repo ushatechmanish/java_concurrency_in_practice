@@ -6,6 +6,9 @@ public class TestHarness
 {
     public static long timeTasks(int nThreads, final Runnable task) throws InterruptedException
     {
+        // once the countdow latch reaches the terminal state , it cannot be reset
+        // Cyclic barriers are automaticall reset when the barrier has been reached by the threads
+
         final CountDownLatch start = new CountDownLatch(1);// latch  used by worker threads to wait till the start latch is unlatched by main thread
         final CountDownLatch end = new CountDownLatch(nThreads); // latch used by main thread to wait till all worker threads are done and countdown the
 
