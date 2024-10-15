@@ -16,7 +16,6 @@ public class CellularAutomata
     {
         this.mainBoard = mainBoard;
         int count = Runtime.getRuntime().availableProcessors();
-        // cyclic barrier should be used when one iteration should complete before next iteration and single iteration can be divided
         // in sub problems
         this.barrier = new CyclicBarrier(count,
                 () -> // this is executed before releasing all the threads
